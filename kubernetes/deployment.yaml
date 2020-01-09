@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dask-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dask
+      component: scheduler
+  template:
+    metadata:
+      labels:
+        app: dask
+        component: scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: daskdev/dask:latest
+          args: ['dask-scheduler', '--port', '54321', '--dashboard']
+          ports:
+            - containerPort: 54321  # scheduler TCP
+            - containerPort: 8787  # scheduler dashboard
+---
+# Configure a service for testing with Minikube.
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduler
+  labels:
+    app: dask
+    component: scheduler
+spec:
+  type: NodePort
+  selector:
+    app: dask
+    component: scheduler
+  ports:
+  - name: scheduler
+    port: 54321  # Port accessible inside cluster
+    targetPort: 54321  # Port in pod
+    nodePort: 30321  # Port accessible outside cluster
+  - name: dashboard
+    port: 8787  # Port accessible inside cluster
+    targetPort: 8787  # Port in pod
+    nodePort: 30787  # Port accessible outside cluster
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dask-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dask
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: dask
+        component: worker
+    spec:
+      containers:
+        - name: scheduler
+          image: daskdev/dask:latest
+          args: [dask-worker, '--no-dashboard', 'scheduler:54321']

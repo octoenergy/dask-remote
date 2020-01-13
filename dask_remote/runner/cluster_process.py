@@ -42,6 +42,12 @@ class ClusterProcess(Process):
             def num_workers(self):
                 return len(self.workers)
 
+            def _adaptive_stop(self):
+                try:
+                    self._adaptive.stop()
+                except AttributeError:
+                    pass
+
         return ClusterClass
 
     def run(self):
@@ -78,7 +84,7 @@ class ClusterProcessProxy:
         "num_workers",
         "status",
     ]
-    CLUSTER_METHODS = ["scale", "adapt"]
+    CLUSTER_METHODS = ["scale", "adapt", "_adaptive_stop"]
 
     def __init__(self, cmd_conn: Connection, result_conn: Connection):
         self.cmd_conn = cmd_conn  # pipe connection to receive scaling/control commands from

@@ -42,6 +42,11 @@ jobs:
           command: |
             make lint
 
+      - run:
+          name: Run unit tests
+          command: |
+            make test TEST_GROUP=unit
+
       - store_test_results:
           path: ./junit
 

@@ -1,6 +1,3 @@
-import pytest
-
-
 def pytest_addoption(parser):
     parser.addoption("--host", default="localhost", help="Hostname of a running scheduler")
     parser.addoption("--port", default="30321", help="Scheduler port")

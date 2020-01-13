@@ -2,7 +2,7 @@ from multiprocessing import Pipe
 
 import pytest
 
-from dask_remote.runner.runner import ClusterProcess, ClusterProcessProxy
+from dask_remote.runner.cluster_process import ClusterProcess, ClusterProcessProxy
 
 
 @pytest.fixture

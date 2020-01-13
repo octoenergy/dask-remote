@@ -71,7 +71,13 @@ class ClusterProcess(Process):
 
 class ClusterProcessProxy:
 
-    CLUSTER_ATTRIBUTES = ["dashboard_link", "scheduler_address", "scheduler_info", "num_workers"]
+    CLUSTER_ATTRIBUTES = [
+        "dashboard_link",
+        "scheduler_address",
+        "scheduler_info",
+        "num_workers",
+        "status",
+    ]
     CLUSTER_METHODS = ["scale", "adapt"]
 
     def __init__(self, cmd_conn: Connection, result_conn: Connection):

@@ -76,3 +76,5 @@ dask-worker-space/
 # Auto-generated files
 setup.py
 README.rst
+
+notebooks/

@@ -28,9 +28,17 @@ class ClusterProcess(Process):
         self.result_conn = result_conn  # pipe connection to return messages to
         super().__init__()
 
-    # Process side
+    @property
+    def cluster_class(self):
+        class ClusterClass(self.cluster_cls):
+            @property
+            def num_workers(self):
+                return len(self.workers)
+
+        return ClusterClass
+
     def run(self):
-        cluster = self.cluster_cls(**self.cluster_kwargs)
+        cluster = self.cluster_class(**self.cluster_kwargs)
         while True:
             cmd = self.cmd_conn.recv()
             self._process_cmd(cmd, cluster)
@@ -56,7 +64,7 @@ class ClusterProcess(Process):
 
 class ClusterProcessProxy:
 
-    CLUSTER_ATTRIBUTES = ["dashboard_link", "scheduler_address", "scheduler_info"]
+    CLUSTER_ATTRIBUTES = ["dashboard_link", "scheduler_address", "scheduler_info", "num_workers"]
     CLUSTER_METHODS = ["scale", "adapt"]
 
     def __init__(self, cmd_conn: Connection, result_conn: Connection):

@@ -18,6 +18,7 @@ def result_pipe():
 class PingCluster:
     def __init__(self, n=0):
         self.scheduler_info = dict(workers=list(range(n)))
+        self.workers = list(range(n))
 
     @property
     def scheduler_address(self):
@@ -131,3 +132,7 @@ class TestIntegration:
 
     def test_method(self, cluster_process, cluster_process_proxy):
         assert cluster_process_proxy.scale(42) == f"scale(42)"
+
+    def test_new_attribute(self, cluster_process, cluster_process_proxy):
+        """Test attribute that is valid, but not part of the original cluster class."""
+        assert cluster_process_proxy.num_workers == 0

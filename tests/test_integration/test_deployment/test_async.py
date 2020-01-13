@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from dask_remote import DeploymentCluster
+from dask_remote.deployment import DeploymentCluster
 
 
 @pytest.fixture

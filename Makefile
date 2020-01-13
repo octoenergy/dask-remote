@@ -1,9 +1,20 @@
 K8S_NAMESPACE=test
 
+# Test selectopm
+TEST_GROUP ?= unit
+
+.PHONY: clean setup-py install format lint test
+
+clean:
+	find . | grep -E '(__pycache__|\.pyc|\.pyo$$)' | xargs rm -rf
+
+setup-py:  # create a setup.py for editable installs
+	dephell deps convert
+
 install:
 	poetry install
 
-black:
+format:
 	poetry run isort -rc -y .
 	poetry run black .
 
@@ -13,10 +24,9 @@ lint:
 	poetry run mypy .
 
 test:
-	poetry run pytest tests --host=$(shell minikube ip)
+	poetry run pytest tests/test_${TEST_GROUP} --host=$(shell minikube ip)
+
+.PHONY: k8s-apply
 
 k8s-apply:
 	kubectl -n ${K8S_NAMESPACE} apply -f kubernetes/
-
-setup-py:  # create a setup.py for editable installs
-	dephell deps convert

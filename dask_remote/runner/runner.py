@@ -13,6 +13,9 @@ Run Cluster in a separata process, and expose its scaling commands through a "pr
 """
 from multiprocessing import Process
 from multiprocessing.connection import Connection
+from typing import Optional, Type
+
+from distributed.deploy.cluster import Cluster
 
 
 class ClusterProcess(Process):
@@ -20,7 +23,11 @@ class ClusterProcess(Process):
     """
 
     def __init__(
-        self, cmd_conn: Connection, result_conn: Connection, cluster_cls, cluster_kwargs=None
+        self,
+        cmd_conn: Connection,
+        result_conn: Connection,
+        cluster_cls: Type[Cluster],
+        cluster_kwargs: Optional[dict] = None,
     ):
         self.cluster_cls = cluster_cls
         self.cluster_kwargs = cluster_kwargs or {}

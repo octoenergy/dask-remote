@@ -19,6 +19,7 @@ cluster_proxy = cluster_proc.proxy  # type: ClusterProcessProxy
 cluster_proxy.scale(4)  # command is proxied to the cluster object in the child process
 
 api_proc = ApiProcess(cluster_proxy)
+api_proc.start()
 
 cluster_proc.join()  # cluster remains alive until terminated
 api_proc.join()

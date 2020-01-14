@@ -1,6 +1,6 @@
 import pytest
 
-from dask_remote.runner.cluster_process import ClusterProcess
+from dask_remote.runner.cluster_process import ClusterProcess, ResultPicklingError
 
 from .conftest import PingCluster
 
@@ -71,7 +71,7 @@ class TestClusterProcess:
         cluster_process._cmd_pipe[0].send(cmd)
         result = cluster_process._result_pipe[1].recv()
 
-        assert isinstance(result, AttributeError)
+        assert isinstance(result, ResultPicklingError)
 
     def test_returns_error(self, cluster_process):
         cmd = {"attribute": "not_an_attribute"}

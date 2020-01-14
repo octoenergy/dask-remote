@@ -124,7 +124,10 @@ class ClusterProcess(Process):
             result = self._call_cmd(cmd, cluster)
         except Exception as e:
             result = e
-        self.result_conn.send(result)
+        try:
+            self.result_conn.send(result)
+        except Exception as e:
+            self.result_conn.send(e)
 
     @staticmethod
     def _call_cmd(cmd, obj):

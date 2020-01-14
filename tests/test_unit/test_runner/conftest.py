@@ -11,10 +11,6 @@ class PingCluster:
         self.n = n
 
     @property
-    def scheduler_info(self):
-        return dict(workers=list(range(self.n)))
-
-    @property
     def workers(self):
         return list(range(self.n))
 
@@ -30,12 +26,9 @@ class PingCluster:
         self.n = n
         return f"scale({n})"
 
-    @property
-    def attribute(self):
-        return "attribute"
-
-    def method(self, n):
-        return f"method({n})"
+    def adapt(self, **kwargs):
+        """Not picklable"""
+        return lambda: None
 
 
 @pytest.fixture

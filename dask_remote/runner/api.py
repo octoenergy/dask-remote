@@ -44,16 +44,16 @@ def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> Fas
         if n < 0:
             n = 0
         app.cluster._adaptive_stop()
-        app.cluster.scale(n)
-        return MessageResponse(message=f"Scaling to {n} workers")
+        response = app.cluster.scale(n)
+        return MessageResponse(message=str(response))
 
     @app.post("/adapt", response_model=MessageResponse)
     async def adapt(minimum: int = 0, maximum: Optional[int] = None):
         """Set cluster to adaptive scaling mode."""
         if maximum is None:
             maximum = math.inf
-        app.cluster.adapt(minimum=minimum, maximum=maximum)
-        return MessageResponse(message=f"Adapting between {minimum} and {maximum}")
+        response = app.cluster.adapt(minimum=minimum, maximum=maximum)
+        return MessageResponse(message=str(response))
 
     return app
 

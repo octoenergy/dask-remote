@@ -41,30 +41,37 @@ class TestClusterProcess:
         cluster_process = ClusterProcess(cluster_cls=PingCluster, cluster_kwargs={"n": n})
         cluster_process.start()
 
-        cmd = {"attribute": "scheduler_info"}
+        cmd = {"attribute": "num_workers"}
         cluster_process._cmd_pipe[0].send(cmd)
-        info = cluster_process._result_pipe[1].recv()
+        result = cluster_process._result_pipe[1].recv()
 
-        assert len(info["workers"]) == n
+        assert result == n
 
         cluster_process.terminate()
         cluster_process.join()
 
     def test_attribute(self, cluster_process):
-        cmd = {"attribute": "attribute"}
+        cmd = {"attribute": "status"}
         cluster_process._cmd_pipe[0].send(cmd)
         result = cluster_process._result_pipe[1].recv()
 
-        assert result == "attribute"
+        assert result == "running"
 
     @pytest.mark.parametrize(
-        "cmd", [{"method": "method", "args": [42]}, {"method": "method", "kwargs": {"n": 42}}]
+        "cmd", [{"method": "scale", "args": [42]}, {"method": "scale", "kwargs": {"n": 42}}]
     )
     def test_method(self, cluster_process, cmd):
         cluster_process._cmd_pipe[0].send(cmd)
         result = cluster_process._result_pipe[1].recv()
 
-        assert result == "method(42)"
+        assert result == "scale(42)"
+
+    def test_not_picklable(self, cluster_process):
+        cmd = {"method": "adapt"}
+        cluster_process._cmd_pipe[0].send(cmd)
+        result = cluster_process._result_pipe[1].recv()
+
+        assert isinstance(result, AttributeError)
 
     def test_returns_error(self, cluster_process):
         cmd = {"attribute": "not_an_attribute"}
@@ -79,7 +86,7 @@ class TestClusterProcess:
         assert proxy.result_conn is cluster_process._result_pipe[1]
 
 
-class TestIntegration:
+class TestBothTogether:
     def test_attribute(self, cluster_process):
         assert cluster_process.proxy.scheduler_address == "scheduler_address"
 

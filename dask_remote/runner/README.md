@@ -9,17 +9,13 @@
 A combined example:
 
 ```python
-from multiprocessing import Pipe
-
 from dask.distributed import LocalCluster
-from dask_remote.runner import ClusterProcess, ClusterProcessProxy, ApiProcess
+from dask_remote.runner import ClusterProcess, ApiProcess
 
-cmd_conn, result_conn = Pipe()
-
-cluster_proc = ClusterProcess(cmd_conn, result_conn, LocalCluster, dict(n_workers=0))
+cluster_proc = ClusterProcess(LocalCluster, dict(n_workers=0))
 cluster_proc.start()  # uses the multiprocessing.Process API
 
-cluster_proxy = ClusterProcessProxy(cmd_conn, result_conn)
+cluster_proxy = cluster_proc.proxy  # type: ClusterProcessProxy
 cluster_proxy.scale(4)  # command is proxied to the cluster object in the child process
 
 api_proc = ApiProcess(cluster_proxy)
@@ -38,4 +34,3 @@ $ curl -X POST http://localhost:8000/scale/42
 ## ToDo
 
 - add a client for this API
-- auto-generate Pipes for a Process-Proxy pair

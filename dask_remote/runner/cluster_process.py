@@ -1,21 +1,19 @@
 """
 Run Cluster in a separata process, and expose its scaling commands through a "proxy".
-
->>> from multiprocessing import Pipe
->>> from dask.distributed import LocalCluster
->>> from dask_remote import ClusterProcess, ClusterProcessProxy
->>> cmd_conn, result_conn = Pipe()
->>> cluster_proc = ClusterProcess(cmd_conn, result_conn, LocalCluster, dict(n_workers=0))
->>> cluster_proc.start()  # uses the multiprocessing.Process API
->>> cluster_proxy = ClusterProcessProxy(cmd_conn, result_conn)
->>> cluster_proxy.scale(4)  # command is proxied to the cluster object in the child process
->>> cluster_prox.join()  # cluster remains alive until terminated
 """
+import logging
 from multiprocessing import Process
 from multiprocessing.connection import Connection, Pipe
+from pickle import PicklingError
 from typing import Optional, Tuple, Type
 
 from distributed.deploy.cluster import Cluster
+
+logger = logging.getLogger(__name__)
+
+
+class ResultPicklingError(PicklingError):
+    ...
 
 
 class ClusterProcessProxy:
@@ -37,7 +35,10 @@ class ClusterProcessProxy:
     def _submit_cmd(self, cmd):
         self.cmd_conn.send(cmd)
         result = self.result_conn.recv()
-        if isinstance(result, Exception):
+        if isinstance(result, ResultPicklingError):
+            logger.warn("Value could not be returned: %s", result)
+            result = None
+        elif isinstance(result, Exception):
             raise result
         return result
 
@@ -127,7 +128,9 @@ class ClusterProcess(Process):
         try:
             self.result_conn.send(result)
         except Exception as e:
-            self.result_conn.send(e)
+            send_error = ResultPicklingError(f"Return value {result} can not be sent back")
+            send_error.__cause__ = e
+            self.result_conn.send(send_error)
 
     @staticmethod
     def _call_cmd(cmd, obj):

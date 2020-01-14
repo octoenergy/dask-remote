@@ -18,7 +18,7 @@ def test_status(client):
 def test_scale(client):
     response = client.post("/scale/42")
     assert response.status_code == 200
-    assert response.json() == {"message": "Scaling to 42 workers"}
+    assert response.json() == {"message": "scale(42)"}
 
     response = client.get("/scale")
     assert response.json() == {"message": "42"}

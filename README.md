@@ -1,37 +1,23 @@
 # dask-remote
-Provides a kubernetes-native `dask` distributed cluster deployment.
 
-The project is heavily inspired by, but takes a different approach to, `dask-kubernetes`.
+Aims to collect tools for deploying a persistent `dask` cluster, in particular on Kubernets.
 
-## Usage
-- see `kubernetes/deployment.yaml` for a sample deployment - use `kubectl`/`helm`/...
-- instantiate a `DeploymentCluster`, e.g.:
-```python
-cluster = DeploymentCluster(
-    remote_scheduler="tcp://scheduler.test:54321",
-    deployment_name="dask-worker",
-    namespace="test",
-    in_cluster=True ,  # if running inside the K8S cluster
-    config_file="..."  # if authenticating with a K8s cluster using a config file
-)
+## `dask_remote.runner`
+
+- `ClusterProcess` provides a way to run any `Cluster` in a python process, thus allowing easy way to build CLIs and other non-interactive cluster deployments
+- `ClusterProcessProxy` provides a process and thread-safe for each `ClusterProcess` to allow access to methods and attributes such as `scale`
+- `dask_remote.runner.api` provides a way to expose the proxy methods via a RESTful API built on `FastAPI`, as well as a way to run a simple `uvicorn` server exposing this API in a separate process.
+
+With a Cluster and the API server both running, we can e.g. scale the cluster over REST:
+
 ```
-The cluster now provides the expected `scale` functionality, and can be passed to a `Client` for
-submitting computations.
+$ curl -X POST http://localhost:8000/scale/42
+```
 
-## Background
-Instead of relying on `SpecCluster`, the `DeploymentCluster` provides a *stateless* cluster implementation that relies on a `Deployment` kubernetes resource type for scaling a worker group.
+See [example in `ClusterProcess` README](dask_remote/runner/README.md)
 
-- ✔️ our approach simplifies deployment and allows adding the `DeploymentCluster` to an existing deployment
-- ✔️ the size of the worker pool is maintained in the presence of pod evictions, node failures, and other chaos events
-- ❌ on the flip side, the stateless cluster approach is currently unable to handle "graceful"
-worker shut-down or selecting specific workers/Pods to close.
+## `dask_remote.deployment`
 
-## Testing
-Tests assume the deployment is created locally with `minikube`.
+Provides a `DeploymentCluster` class for managing scaling via a Kubernetes Deployment of worker Pods.
 
-Run `make k8s-apply` to create a local deployment, followed by `make test` to run tests.
-The test suite can be run against a deployment with a different hostname/port by passing
-the following options to `pytest`:
-- `--host`: host name or IP (defaults to `localhost`, or `$(minikube ip)` if run from the Makefile
-- `--port`: scheduler port, defaults to the exposed NodePort 30321
-- `--dashboard-port`: scheduler port, defaults to the exposed NodePort 30787
+See [`DeploymentCluster` README](dask_remote/deployment/README.md)

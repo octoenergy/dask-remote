@@ -1,15 +1,5 @@
 """
 Run Cluster in a separata process, and expose its scaling commands through a "proxy".
-
->>> from multiprocessing import Pipe
->>> from dask.distributed import LocalCluster
->>> from dask_remote import ClusterProcess, ClusterProcessProxy
->>> cmd_conn, result_conn = Pipe()
->>> cluster_proc = ClusterProcess(cmd_conn, result_conn, LocalCluster, dict(n_workers=0))
->>> cluster_proc.start()  # uses the multiprocessing.Process API
->>> cluster_proxy = ClusterProcessProxy(cmd_conn, result_conn)
->>> cluster_proxy.scale(4)  # command is proxied to the cluster object in the child process
->>> cluster_prox.join()  # cluster remains alive until terminated
 """
 from multiprocessing import Process
 from multiprocessing.connection import Connection, Pipe

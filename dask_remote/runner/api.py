@@ -60,11 +60,14 @@ def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> Fas
 
 class ApiProcess(Process):
     def __init__(
-        self, cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict, uvicorn_kwargs: dict
+        self,
+        cluster_proxy: ClusterProcessProxy,
+        fastapi_kwargs: Optional[dict] = None,
+        uvicorn_kwargs: Optional[dict] = None,
     ):
         self.cluster_proxy = cluster_proxy
-        self.fastapi_kwargs = fastapi_kwargs
-        self.uvicorn_kwargs = uvicorn_kwargs
+        self.fastapi_kwargs = fastapi_kwargs or {}
+        self.uvicorn_kwargs = uvicorn_kwargs or {}
         super().__init__()
 
     @property

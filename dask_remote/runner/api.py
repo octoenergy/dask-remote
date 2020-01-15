@@ -2,7 +2,6 @@ import math
 from multiprocessing import Process
 from typing import Optional
 
-import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.responses import RedirectResponse
@@ -59,6 +58,8 @@ def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> Fas
 
 
 class ApiProcess(Process):
+    import uvicorn
+
     def __init__(
         self,
         cluster_proxy: ClusterProcessProxy,
@@ -75,4 +76,4 @@ class ApiProcess(Process):
         return cluster_api(self.cluster_proxy, fastapi_kwargs=self.fastapi_kwargs)
 
     def run(self):
-        uvicorn.run(self.app, **self.uvicorn_kwargs)
+        self.uvicorn.run(self.app, **self.uvicorn_kwargs)

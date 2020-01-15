@@ -2,7 +2,7 @@
 category = "main"
 description = "Async http client/server framework (asyncio)"
 name = "aiohttp"
-optional = false
+optional = true
 python-versions = ">=3.5.3"
 version = "3.6.2"
 
@@ -28,7 +28,7 @@ version = "1.4.3"
 category = "main"
 description = "Timeout context manager for asyncio programs"
 name = "async-timeout"
-optional = false
+optional = true
 python-versions = ">=3.5.3"
 version = "3.0.1"
 
@@ -164,10 +164,10 @@ python-versions = ">=2.7"
 version = "0.3"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 name = "fastapi"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "0.46.0"
 
@@ -196,10 +196,10 @@ pycodestyle = ">=2.5.0,<2.6.0"
 pyflakes = ">=2.1.0,<2.2.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 name = "h11"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.9.0"
 
@@ -212,11 +212,11 @@ python-versions = "*"
 version = "1.0.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "A collection of framework independent HTTP protocol utils."
 marker = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"pypy\""
 name = "httptools"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.0.13"
 
@@ -262,7 +262,7 @@ xdg_home = ["appdirs (>=1.4.0)"]
 category = "main"
 description = "Kubernetes asynchronous python client"
 name = "kubernetes-asyncio"
-optional = false
+optional = true
 python-versions = "*"
 version = "10.0.1"
 
@@ -303,7 +303,7 @@ version = "0.6.2"
 category = "main"
 description = "multidict implementation"
 name = "multidict"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "4.7.4"
 
@@ -395,10 +395,10 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.5.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Data validation and settings management using python 3.6 type hinting"
 name = "pydantic"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "1.3"
 
@@ -476,7 +476,7 @@ testing = ["async-generator (>=1.3)", "coverage", "hypothesis (>=3.64)"]
 category = "main"
 description = "Extensions to the standard Python datetime module"
 name = "python-dateutil"
-optional = false
+optional = true
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 version = "2.8.1"
 
@@ -542,10 +542,10 @@ python-versions = "*"
 version = "2.1.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "The little ASGI library that shines."
 name = "starlette"
-optional = false
+optional = true
 python-versions = ">=3.6"
 version = "0.12.9"
 
@@ -614,10 +614,10 @@ secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "cer
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "The lightning-fast ASGI server."
 name = "uvicorn"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.11.1"
 
@@ -629,11 +629,11 @@ uvloop = ">=0.14.0"
 websockets = ">=8.0.0,<9.0.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Fast implementation of asyncio event loop on top of libuv"
 marker = "sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"pypy\""
 name = "uvloop"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.14.0"
 
@@ -646,10 +646,10 @@ python-versions = "*"
 version = "0.1.8"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
 name = "websockets"
-optional = false
+optional = true
 python-versions = ">=3.6.1"
 version = "8.1"
 
@@ -657,7 +657,7 @@ version = "8.1"
 category = "main"
 description = "Yet another URL library"
 name = "yarl"
-optional = false
+optional = true
 python-versions = ">=3.5"
 version = "1.4.2"
 
@@ -692,8 +692,13 @@ more-itertools = "*"
 docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "contextlib2", "unittest2"]
 
+[extras]
+api = ["fastapi", "pydantic"]
+k8s = ["kubernetes_asyncio"]
+uvicorn = ["uvicorn"]
+
 [metadata]
-content-hash = "b532382ef8b7d7bcf817292650cb662d8e053eaf40cee4f48ec96a94cd59a81e"
+content-hash = "6c67663ae3047945722650ac75c116de7959c6e4730f31b0cfecc0ea154fa967"
 python-versions = "^3.7"
 
 [metadata.files]

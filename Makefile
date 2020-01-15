@@ -15,7 +15,7 @@ lock:
 	poetry lock
 
 install:
-	poetry install
+	poetry install --extras k8s --extras api
 
 format:
 	poetry run isort -rc -y .

@@ -11,6 +11,9 @@ clean:
 setup-py:  # create a setup.py for editable installs
 	dephell deps convert
 
+lock:
+	poetry lock
+
 install:
 	poetry install
 

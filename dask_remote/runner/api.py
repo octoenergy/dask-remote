@@ -13,8 +13,11 @@ class MessageResponse(BaseModel):
     message: str
 
 
-def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> FastAPI:
+def cluster_api(
+    cluster_proxy: Optional[ClusterProcessProxy] = None, fastapi_kwargs: Optional[dict] = None
+) -> FastAPI:
     """Create a FastAPI app that exposes given ClusterProcessProxy."""
+    fastapi_kwargs = fastapi_kwargs or {}
     app = FastAPI(**fastapi_kwargs)
     app.cluster = cluster_proxy
 
@@ -58,7 +61,6 @@ def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> Fas
 
 
 class ApiProcess(Process):
-
     def __init__(
         self,
         cluster_proxy: ClusterProcessProxy,
@@ -76,4 +78,5 @@ class ApiProcess(Process):
 
     def run(self):
         import uvicorn
+
         uvicorn.run(self.app, **self.uvicorn_kwargs)

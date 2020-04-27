@@ -21,7 +21,7 @@ def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> Fas
     @app.get("/", summary="Redirect to swagger docs")
     async def root():
         """Redirect to API docs."""
-        response = RedirectResponse(url="/docs")
+        response = RedirectResponse(url=f"{app.openapi_prefix}/docs")
         return response
 
     @app.get("/status", response_model=MessageResponse)

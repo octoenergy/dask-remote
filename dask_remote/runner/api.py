@@ -58,7 +58,6 @@ def cluster_api(cluster_proxy: ClusterProcessProxy, fastapi_kwargs: dict) -> Fas
 
 
 class ApiProcess(Process):
-    import uvicorn
 
     def __init__(
         self,
@@ -76,4 +75,5 @@ class ApiProcess(Process):
         return cluster_api(self.cluster_proxy, fastapi_kwargs=self.fastapi_kwargs)
 
     def run(self):
-        self.uvicorn.run(self.app, **self.uvicorn_kwargs)
+        import uvicorn
+        uvicorn.run(self.app, **self.uvicorn_kwargs)

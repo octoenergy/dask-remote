@@ -1,6 +1,6 @@
 K8S_NAMESPACE=test
 
-# Test selectopm
+# Test selection
 TEST_GROUP ?= unit
 
 .PHONY: clean setup-py install format lint test

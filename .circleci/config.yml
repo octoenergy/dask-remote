@@ -8,8 +8,16 @@ jobs:
       - image: circleci/python:3.7.4
 
     working_directory: ~/dask-remote
+    
+    environment:
+        PIPENV_VENV_IN_PROJECT: true 
 
     steps:
+      - run:
+          name: Update poetry
+          command: |
+            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+            cat $HOME/.poetry/env >> $BASH_ENV
 
       - checkout
 
@@ -23,9 +31,9 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - pip-packages-v1-{{ .Branch }}-{{ checksum "poetry.lock" }}
-            - pip-packages-v1-{{ .Branch }}-
-            - pip-packages-v1-
+            - pip-cache-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+            - pip-cache-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - pip-cache-{{ .Environment.CACHE_VERSION }}-
 
       - run:
           name: Install dependencies
@@ -35,7 +43,7 @@ jobs:
       - save_cache:
           paths:
               - ./.venv/
-          key: pip-packages-v1-{{ .Branch }}-{{ checksum "poetry.lock" }}
+          key: pip-cache-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
 
       - run:
           name: Run lint

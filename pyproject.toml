@@ -9,7 +9,7 @@ description = "Dask cluster based on a Kubernetes-native Deployment"
 authors = ["Igor Gotlibovych <igor@octopus.energy>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 distributed = "^2.9"
 kubernetes_asyncio = { version = "^10.0", optional = true }
 fastapi = { version = "^0.46.0", optional = true }

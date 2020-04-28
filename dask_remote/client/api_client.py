@@ -37,7 +37,7 @@ class ApiClient:
 
     def get(self, endpoint: str):
         if endpoint not in self.GET_ENDPOINTS:
-            raise ValueError("Unknown endpoint '{method}'")
+            raise ValueError(f"Unknown endpoint '{endpoint}'")
         model = self.GET_ENDPOINTS[endpoint]
         url = self.url.rstrip("/") + endpoint
 
@@ -59,7 +59,7 @@ class ApiClient:
 
     def post(self, endpoint: str, **kwargs):
         if endpoint not in self.POST_ENDPOINTS:
-            raise ValueError("Unknown endpoint '{method}'")
+            raise ValueError(f"Unknown endpoint '{endpoint}'")
         model = self.POST_ENDPOINTS[endpoint]
         endpoint, kwargs = self._format_endpoint(endpoint, **kwargs)
         url = self.url.rstrip("/") + endpoint

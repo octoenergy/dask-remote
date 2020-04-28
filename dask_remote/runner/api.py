@@ -1,9 +1,10 @@
 import math
 from multiprocessing import Process
 from typing import Any, Dict, Optional
+from typing_extensions import Literal
 
 from fastapi import FastAPI
-from pydantic import BaseModel, constr
+from pydantic import BaseModel
 from starlette.responses import RedirectResponse
 
 from .cluster_process import ClusterProcessProxy
@@ -14,7 +15,7 @@ class ResponseMessage(BaseModel):
 
 
 class WorkerInfo(BaseModel):
-    type: constr(regex="^Worker$")
+    type: Literal["Worker"]
     id: Any
     host: Optional[str]
     nanny: Optional[str]
@@ -27,7 +28,7 @@ class WorkerInfo(BaseModel):
 
 
 class SchedulerInfo(BaseModel):
-    type: constr(regex="^Scheduler$")
+    type: Literal["Scheduler"]
     id: Any
     address: Optional[str]
     services: Dict[str, Any]
@@ -81,7 +82,7 @@ def cluster_api(
     @app.get(
         "/dashboard_link", summary="Link to monitoring dashboard", response_model=ResponseMessage
     )
-    async def scheduler_address():
+    async def dashboard_link():
         """Return public link to monitoring dashboard."""
         dashboard_link = app.dask_dashboard_link or app.dask_cluster_proxy.dashboard_link
         return ResponseMessage(message=dashboard_link)

@@ -1,9 +1,9 @@
 import math
 from multiprocessing import Process
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 from starlette.responses import RedirectResponse
 
 from .cluster_process import ClusterProcessProxy
@@ -11,6 +11,27 @@ from .cluster_process import ClusterProcessProxy
 
 class MessageResponse(BaseModel):
     message: str
+
+
+class WorkerInfo(BaseModel):
+    type: constr(regex="^Worker$")
+    id: Any
+    host: Optional[str]
+    nanny: Optional[str]
+    name: Optional[Any]
+    nthreads: int
+    memory_limit: int
+    services: Dict[str, Any]
+    resources: Dict[str, Any]
+    local_directory: Optional[str]
+
+
+class SchedulerInfo(BaseModel):
+    type: constr(regex="^Scheduler$")
+    id: Any
+    address: Optional[str]
+    services: Dict[str, Any]
+    workers: Dict[Any, WorkerInfo]
 
 
 def cluster_api(
@@ -34,6 +55,10 @@ def cluster_api(
     @app.get("/scheduler_address", response_model=MessageResponse)
     async def scheduler_address():
         return MessageResponse(message=app.cluster.scheduler_address)
+
+    @app.get("/scheduler_info", response_model=SchedulerInfo)
+    async def scheduler_info():
+        return SchedulerInfo(**app.cluster.scheduler_info)
 
     @app.get("/scale", response_model=MessageResponse)
     async def scale():

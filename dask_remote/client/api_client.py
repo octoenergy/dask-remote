@@ -1,8 +1,9 @@
+from string import Formatter
 from typing import Optional
 
 import requests
 
-from .api import cluster_api
+from ..runner.api import cluster_api
 
 _api_app = cluster_api()
 _api_get_endpoints = {
@@ -37,21 +38,33 @@ class ApiClient:
     def get(self, endpoint: str):
         if endpoint not in self.GET_ENDPOINTS:
             raise ValueError("Unknown endpoint '{method}'")
-        url = self.url.rstrip("/") + endpoint
         model = self.GET_ENDPOINTS[endpoint]
+        url = self.url.rstrip("/") + endpoint
 
         response = requests.get(url, auth=self.auth)
         response.raise_for_status()
 
         return model(**response.json())
 
+    @staticmethod
+    def _format_endpoint(endpoint: str, **kwargs):
+        """
+        Insert kwargs into query string.
+
+        _format_endpoint("/scale/{n}", n=1, param='a') returns "/scale/1", {param='a'},
+        which in turn is used to construct the query "/scale/1?param=a"
+        """
+        refs = {fn for _, fn, _, _ in Formatter().parse(endpoint) if fn is not None}
+        return endpoint.format(**kwargs), {k: v for k, v in kwargs.items() if k not in refs}
+
     def post(self, endpoint: str, **kwargs):
         if endpoint not in self.POST_ENDPOINTS:
             raise ValueError("Unknown endpoint '{method}'")
-        url = self.url.rstrip("/") + endpoint.format(**kwargs)
         model = self.POST_ENDPOINTS[endpoint]
+        endpoint, kwargs = self._format_endpoint(endpoint, **kwargs)
+        url = self.url.rstrip("/") + endpoint
 
-        response = requests.post(url, auth=self.auth)
+        response = requests.post(url, auth=self.auth, params=kwargs)
         response.raise_for_status()
 
         return model(**response.json())

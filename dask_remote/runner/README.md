@@ -31,7 +31,3 @@ E.g. you can scale the claster using
 ```
 $ curl -X POST http://localhost:8000/scale/42
 ```
-
-## ToDo
-
-- add a client for this API

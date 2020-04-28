@@ -51,7 +51,7 @@ class ApiCluster(RemoteSchedulerCluster):
             return super().dashboard_link
 
     def scale(self, n):
-        self.api_client.post("/scale/{n}", n=n)
+        self.api_client.post("/scale", n=n)
 
     def adapt(self, minimum, maximum):
         self.api_client.post("/adapt", minimum=minimum, maximum=maximum)

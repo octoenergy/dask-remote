@@ -51,8 +51,8 @@ class ApiClient:
         """
         Insert kwargs into query string.
 
-        _format_endpoint("/scale/{n}", n=1, param='a') returns "/scale/1", {param='a'},
-        which in turn is used to construct the query "/scale/1?param=a"
+        _format_endpoint("/items/{n}", n=1, param='a') returns "/items/1", {param='a'},
+        which in turn is used to construct the query "/items/1?param=a"
         """
         refs = {fn for _, fn, _, _ in Formatter().parse(endpoint) if fn is not None}
         return endpoint.format(**kwargs), {k: v for k, v in kwargs.items() if k not in refs}

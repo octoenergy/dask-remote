@@ -1,35 +1,56 @@
-K8S_NAMESPACE=test
+SHELL := /bin/sh
 
 # Test selection
 TEST_GROUP ?= unit
+K8S_NAMESPACE ?= test
 
-.PHONY: clean setup-py install format lint test
+.DEFAULT_GOAL := help
 
-clean:
-	find . | grep -E '(__pycache__|\.pyc|\.pyo$$)' | xargs rm -rf
 
-setup-py:  # create a setup.py for editable installs
-	dephell deps convert
+# Helper
+.PHONY: help
 
-lock:
-	poetry lock
+help:  ## Display this auto-generated help message
+	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install:
-	poetry install --extras k8s --extras api
 
-format:
-	poetry run isort -rc -y .
+# Installation
+.PHONY: update install
+
+update:  ## Lock and install build dependencies
+	poetry update
+
+install:  ## Install build dependencies from lock file
+	poetry install -E k8s -E api
+
+
+# Development
+.PHONY: clean format
+
+clean:  ## Clean project from temp files / dirs
+	find . -type d -name __pycache__ | xargs rm -rf
+
+format:  ## Run pydocstyle docstring linter
 	poetry run black .
+	poetry run isort -rc .
 
-lint:
-	poetry run flake8 .
+
+# Testing
+.PHONY: lint test
+
+lint:  ## Run python linters
+	poetry run black --check .
+	poetry run isort --check-only -rc .
 	poetry run pydocstyle .
+	poetry run flake8 .
 	poetry run mypy .
 
-test:
-	poetry run pytest tests/test_${TEST_GROUP} --host=$(shell minikube ip)
+test:  ## Run pytest with grouped tests
+	poetry run pytest tests/test_${TEST_GROUP}
 
+
+# Deployment
 .PHONY: k8s-apply
 
-k8s-apply:
+k8s-apply:  ## Update kubernetes resources
 	kubectl -n ${K8S_NAMESPACE} apply -f kubernetes/

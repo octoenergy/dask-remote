@@ -91,7 +91,7 @@ class TestBothTogether:
         assert cluster_process.proxy.scheduler_address == "scheduler_address"
 
     def test_method(self, cluster_process, cluster_process_proxy):
-        assert cluster_process.proxy.scale(42) == f"scale(42)"
+        assert cluster_process.proxy.scale(42) == "scale(42)"
 
     def test_new_attribute(self, cluster_process, cluster_process_proxy):
         """Test attribute that is valid, but not part of the original cluster class."""

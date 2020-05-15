@@ -1,6 +1,5 @@
-"""
-Run Cluster in a separata process, and expose its scaling commands through a "proxy".
-"""
+"""Run Cluster in a separata process, and expose its scaling commands through a "proxy"."""
+
 import logging
 from multiprocessing import Process
 from multiprocessing.connection import Connection, Pipe
@@ -8,6 +7,7 @@ from pickle import PicklingError
 from typing import Optional, Tuple, Type
 
 from distributed.deploy.cluster import Cluster
+
 
 logger = logging.getLogger(__name__)
 
@@ -68,8 +68,7 @@ class ClusterProcessProxy:
 
 
 class ClusterProcess(Process):
-    """Run a dask Cluster object in a child process, and expose core methods and attributes.
-    """
+    """Run a dask Cluster object in a child process, and expose core methods and attributes."""
 
     def __init__(self, cluster_cls: Type[Cluster], cluster_kwargs: Optional[dict] = None):
         self.cluster_cls = cluster_cls

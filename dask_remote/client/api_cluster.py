@@ -1,12 +1,12 @@
 from typing import Optional
 
-from requests import HTTPError
-
 from ..cluster_base import RemoteSchedulerCluster
 from .api_client import ApiClient
 
 
 class ApiCluster(RemoteSchedulerCluster):
+    _api_client: Optional[ApiClient] = None
+
     def __init__(
         self,
         url: str,
@@ -23,35 +23,30 @@ class ApiCluster(RemoteSchedulerCluster):
         self.password = password
         self.override_scheduler_address = override_scheduler_address
         self.override_dashboard_link = override_dashboard_link
-        self._api_client = None
         super().__init__(asynchronous=asynchronous, loop=loop, security=security)
 
     @property
-    def api_client(self):
-        if not self._api_client:
-            self._api_client = ApiClient(self.url, user=self.user, password=self.password)
+    def api_client(self) -> ApiClient:
+        if self._api_client is None:
+            self._api_client = ApiClient(self.url)
+            if self.user and self.password:
+                self._api_client.set_proxy_credentials(self.user, self.password)
         return self._api_client
 
     @property
-    def scheduler_address(self):
+    def scheduler_address(self) -> str:
         if self.override_scheduler_address:
             return self.override_scheduler_address
-        try:
-            return self.api_client.get("/scheduler_address").message
-        except (ValueError, HTTPError):
-            return self.api_client.get("/scheduler_info").address
+        return self.api_client.get_scheduler_address()
 
     @property
-    def dashboard_link(self):
+    def dashboard_link(self) -> str:
         if self.override_dashboard_link:
             return self.override_dashboard_link
-        try:
-            return self.api_client.get("/dashboard_link").message
-        except (ValueError, HTTPError):
-            return super().dashboard_link
+        return self.api_client.get_dashboard_link()
 
-    def scale(self, n):
-        self.api_client.post("/scale", n=n)
+    def scale(self, n) -> None:
+        self.api_client.set_scale(n)
 
-    def adapt(self, minimum, maximum):
-        self.api_client.post("/adapt", minimum=minimum, maximum=maximum)
+    def adapt(self, minimum, maximum) -> None:
+        self.api_client.set_adapt(minimum, maximum)

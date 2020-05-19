@@ -27,7 +27,7 @@ class PingCluster:
         return f"scale({n})"
 
     def adapt(self, **kwargs):
-        """Not picklable"""
+        """Not picklable."""
         return lambda: None
 
 

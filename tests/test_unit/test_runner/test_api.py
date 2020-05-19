@@ -1,6 +1,7 @@
 import pytest
 from starlette.testclient import TestClient
 
+
 MAX_TIMEOUT = 10
 
 

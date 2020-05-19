@@ -1,69 +1,80 @@
+# https://circleci.com/docs/2.1/language-python/
 version: 2.1
-orbs:
-  codecov: codecov/codecov@1.0.4
 
-jobs:
-  lint-test:
+# ------------------
+# Reusable executors
+# ------------------
+
+executors:
+
+  standard:
     docker:
-      - image: circleci/python:3.7.4
+      - image: circleci/python:3.7.6
+        environment:
+          POETRY_VIRTUALENVS_IN_PROJECT: true
+    working_directory: "~/lib"
 
-    working_directory: ~/dask-remote
-    
-    environment:
-        PIPENV_VENV_IN_PROJECT: true 
 
+# -----------------
+# Reusable commands
+# -----------------
+
+commands:
+
+  update_virtualenv:
     steps:
-      - run:
-          name: Update poetry
-          command: |
-            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-            cat $HOME/.poetry/env >> $BASH_ENV
-
-      - checkout
-
-      # - run:
-      #     name: Configure Github access
-      #     command: |
-      #       	git config --global --unset url.ssh://git@github.com.insteadof;\
-      #           echo https://${GITHUB_TOKEN}:@github.com > ~/.git-credentials
-      #         git config --global credential.helper store
-
       - restore_cache:
           keys:
-            # when lock file changes, use increasingly general patterns to restore cache
-            - pip-cache-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
-            - pip-cache-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
-            - pip-cache-{{ .Environment.CACHE_VERSION }}-
-
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-
       - run:
-          name: Install dependencies
-          command: |
-            make install
-      
+          name: Install Python packages
+          command: make install
       - save_cache:
+          key: virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
           paths:
-              - ./.venv/
-          key: pip-cache-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+            - "./.venv"
 
+
+# --------------
+# Pipeline tasks
+# --------------
+
+jobs:
+
+  lint:
+    executor: standard
+    steps:
+      - checkout
+      - update_virtualenv
       - run:
-          name: Run lint
-          command: |
-            make lint
+          name: Run Python linter
+          command: make lint
 
+  test:
+    executor: standard
+    environment:
+      TEST_GROUP: "unit"
+    steps:
+      - checkout
+      - update_virtualenv
       - run:
-          name: Run unit tests
-          command: |
-            make test TEST_GROUP=unit
-
+          name: Run Python tests
+          command: make test
       - store_test_results:
-          path: ./junit
+          path: "."
 
-      # - codecov/upload:
-      #     file: ./coverage.xml
 
+# -----------------
+# Pipeline workflow
+# -----------------
 
 workflows:
+
   version: 2
-  lint-test-docs:
+
+  lint-test:
     jobs:
-      - lint-test
+      - lint
+      - test

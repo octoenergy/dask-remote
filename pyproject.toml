@@ -9,33 +9,43 @@ description = "Dask cluster based on a Kubernetes-native Deployment"
 authors = ["Igor Gotlibovych <igor@octopus.energy>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
+requests = "*"
 distributed = "^2.9"
 kubernetes_asyncio = { version = "^10.0", optional = true }
-fastapi = { version = "^0.46.0", optional = true }
-pydantic = { version = "^1.3", optional = true }
-uvicorn = { version = "^0.11.1", optional = true }
-requests = { version = "^2.23.0", optional = true }
-typing-extensions = "^3.7.4"
+fastapi = { version = "*", optional = true }
+uvicorn = { version = "*", optional = true }
+# TODO: to be removed once migrated onto Python 3.8
+typing_extensions = "*"
 
 [tool.poetry.extras]
 k8s = ["kubernetes_asyncio"]
-api = ["fastapi", "pydantic", "requests"]
+api = ["fastapi"]
 uvicorn = ["uvicorn"]
 
 [tool.poetry.dev-dependencies]
-isort = "^4.3"
-black = "^19.10b0"
-flake8 = "^3.7"
-pydocstyle = "^4.0"
-mypy = "^0.761.0"
-pytest = "^5.3"
-requests = "^2.22"
-pytest-asyncio = "^0.10.0"
+# Format
+isort = "*"
+black = {version = "*", allow-prereleases = true}
+# Linter
+pydocstyle = "*"
+flake8 = "*"
+mypy = "*"
+# Testing
+pytest = "*"
+pytest-mock = "*"
+pytest-asyncio = "*"
+# Debugging
+ipdb = "*"
+ipython = "*"
 
 [tool.isort]
 line_length = 99
 multi_line_output = 3
+lines_after_imports = 2
+default_section = "THIRDPARTY"
+known_first_party = "dask_remote"
+sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 include_trailing_comma = "True"
 force_grid_wrap = 0
 use_parentheses = "True"
@@ -47,9 +57,3 @@ skip-numeric-underscore-normalization = "True"
 target_version = ['py37']
 include = '\.pyi?$'
 exclude = '(\.git|\.pytest_cache|\.mypy_cache|\.tox|\.venv|build|dist|docs)'
-
-[tool.dephell.main]
-# read from poetry format
-from = {format = "poetry", path = "pyproject.toml"}
-# and convert into setup.py
-to = {format = "setuppy", path = "setup.py"}

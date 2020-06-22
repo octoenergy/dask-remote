@@ -14,6 +14,9 @@ pytest.xml
 # MyPy
 .mypy_cache
 
+# Poetry
+.venv
+
 # Jupyter
 .ipynb_checkpoints
 

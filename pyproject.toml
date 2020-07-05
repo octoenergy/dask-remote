@@ -6,7 +6,7 @@ build-backend = "poetry.masonry.api"
 name = "dask-remote"
 version = "0.0.1"
 description = "Dask cluster based on a Kubernetes-native Deployment"
-authors = ["Igor Gotlibovych <igor@octopus.energy>"]
+authors = ["Octopus Energy <tech@octopus.energy>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"

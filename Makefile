@@ -24,17 +24,29 @@ install:  ## Install build dependencies from lock file
 
 
 # Development
-.PHONY: clean format setup-py
+.PHONY: clean format circleci setup-py k8s-apply
 
 clean:  ## Clean project from temp files / dirs
+	rm -rf build dist
 	find src -type d -name __pycache__ | xargs rm -rf
 
 format:  ## Run pydocstyle docstring linter
 	poetry run black src
-	poetry run isort -rc src
+	poetry run isort src
 
-setup-py:  ## Create project `setup.py` for editable installs
+circleci:  ## Run circleci deployment workflow
+	poetry run black --check src
+	poetry run isort --check-only src
+	poetry run pydocstyle src
+	poetry run flake8 src
+	poetry run mypy src
+	poetry run pytest src/tests/test_${TEST_GROUP}
+
+setup-py:  ## Create project setup.py for editable installs
 	poetry run dephell deps convert
+
+k8s-apply:  ## Update kubernetes resources
+	kubectl -n ${K8S_NAMESPACE} apply -f kubernetes/
 
 
 # Testing
@@ -42,7 +54,7 @@ setup-py:  ## Create project `setup.py` for editable installs
 
 lint:  ## Run python linters
 	poetry run black --check src
-	poetry run isort --check-only -rc src
+	poetry run isort --check-only src
 	poetry run pydocstyle src
 	poetry run flake8 src
 	poetry run mypy src
@@ -52,7 +64,7 @@ test:  ## Run pytest with grouped tests
 
 
 # Deployment
-.PHONY: k8s-apply
+.PHONY: package
 
-k8s-apply:  ## Update kubernetes resources
-	kubectl -n ${K8S_NAMESPACE} apply -f kubernetes/
+package:  ## Build project binary wheel distribution
+	poetry build -f wheel

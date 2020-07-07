@@ -21,6 +21,19 @@ executors:
 
 commands:
 
+  checkout_source:
+    steps:
+      - restore_cache:
+          keys:
+            - source-{{ .Branch }}-{{ .Revision }}
+            - source-{{ .Branch }}-
+            - source-
+      - checkout
+      - save_cache:
+          key: source-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - "./.git"
+
   update_virtualenv:
     steps:
       - restore_cache:
@@ -46,7 +59,7 @@ jobs:
   lint:
     executor: standard
     steps:
-      - checkout
+      - checkout_source
       - update_virtualenv
       - run:
           name: Run Python linter
@@ -57,13 +70,25 @@ jobs:
     environment:
       TEST_GROUP: "unit"
     steps:
-      - checkout
+      - checkout_source
       - update_virtualenv
       - run:
           name: Run Python tests
           command: make test
       - store_test_results:
           path: "."
+
+  build:
+    executor: standard
+    steps:
+      - checkout_source
+      - update_virtualenv
+      - run:
+          name: Build wheel
+          command: make package
+      - store_artifacts:
+          path: dist
+          destination: wheel
 
 
 # -----------------
@@ -74,7 +99,14 @@ workflows:
 
   version: 2
 
-  lint-test:
+  lint-test-build:
     jobs:
       - lint
       - test
+      - build:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              only: master

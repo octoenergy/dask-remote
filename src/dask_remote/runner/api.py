@@ -63,7 +63,7 @@ def cluster_api(
     app.dask_scheduler_address = scheduler_address
     app.dask_dashboard_link = dashboard_link
 
-    @app.get("/", summary="Redirect to this page")
+    @app.get("/", include_in_schema=False)
     async def redirect_root():
         """Redirect to API docs."""
         return RedirectResponse(url=f"{app.root_path}/docs")

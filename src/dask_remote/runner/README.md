@@ -26,7 +26,7 @@ api_proc.join()
 ```
 
 With the API server running, you can see API docs on `http://localhost:8000/docs`.
-E.g. you can scale the claster using
+E.g. you can scale the cluster using
 
 ```
 $ curl -X POST http://localhost:8000/scale/42

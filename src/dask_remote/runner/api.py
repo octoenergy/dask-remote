@@ -66,8 +66,7 @@ def cluster_api(
     @app.get("/", summary="Redirect to this page")
     async def redirect_root():
         """Redirect to API docs."""
-        response = RedirectResponse(url=f"{app.openapi_prefix}/docs")
-        return response
+        return RedirectResponse(url=f"{app.root_path}/docs")
 
     @app.get("/status", summary="Cluster status", response_model=ResponseMessage)
     async def get_status():

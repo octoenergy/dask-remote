@@ -68,5 +68,4 @@ def api_address(api_port):
 
 @pytest.fixture
 def api_app(cluster_process):
-    fastapi_kwargs = {}
-    return cluster_api(cluster_process.proxy, fastapi_kwargs=fastapi_kwargs)
+    return cluster_api(cluster_process.proxy)

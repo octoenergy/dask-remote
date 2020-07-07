@@ -4,7 +4,7 @@ import logging
 from multiprocessing import Process
 from multiprocessing.connection import Connection, Pipe
 from pickle import PicklingError
-from typing import Optional, Tuple, Type
+from typing import Any, Optional, Tuple, Type
 
 from distributed.deploy.cluster import Cluster
 
@@ -64,7 +64,7 @@ class ClusterProcessProxy:
         elif attr in self.CLUSTER_METHODS:
             return self._get_cluster_method(attr)
         else:
-            return super().__getattr__(attr)
+            raise AttributeError
 
 
 class ClusterProcess(Process):
@@ -97,8 +97,11 @@ class ClusterProcess(Process):
         return self._result_pipe[0]
 
     @property
-    def cluster_class(self):
-        class ClusterClass(self.cluster_cls):
+    def cluster_class(self) -> Type[Cluster]:
+        # Mypy unsupported feature: dynamic base class creation
+        cluster_cls: Any = self.cluster_cls
+
+        class ClusterClass(cluster_cls):
             @property
             def num_workers(self):
                 return len(self.workers)

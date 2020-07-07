@@ -48,7 +48,7 @@ class DeploymentCluster(RemoteSchedulerCluster):
             if self._scaling_target is None:
                 return
             body = {"spec": {"replicas": self._scaling_target}}
-            await self.app_api.patch_namespaced_deployment_scale_with_http_info(
+            await self.app_api.patch_namespaced_deployment_scale_with_http_info(  # type: ignore
                 name=self.deployment_name, namespace=self.namespace, body=body
             )
             self._scaling_target = None

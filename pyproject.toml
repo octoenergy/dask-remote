@@ -7,6 +7,9 @@ name = "dask-remote"
 version = "0.0.1"
 description = "Dask cluster based on a Kubernetes-native Deployment"
 authors = ["Octopus Energy <tech@octopus.energy>"]
+packages = [
+    { include = "dask_remote", from = "src" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -38,6 +41,8 @@ pytest-asyncio = "*"
 # Debugging
 ipdb = "*"
 ipython = "*"
+# Packaging
+dephell = "*"
 
 [tool.isort]
 line_length = 99
@@ -46,14 +51,13 @@ lines_after_imports = 2
 default_section = "THIRDPARTY"
 known_first_party = "dask_remote"
 sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
-include_trailing_comma = "True"
-force_grid_wrap = 0
-use_parentheses = "True"
-skip=".git, .pytest_cache, .mypy_cache, .tox, .venv, build, dist"
 
 [tool.black]
 line-length = 99
-skip-numeric-underscore-normalization = "True"
 target_version = ['py37']
-include = '\.pyi?$'
-exclude = '(\.git|\.pytest_cache|\.mypy_cache|\.tox|\.venv|build|dist|docs)'
+
+[tool.dephell.main]
+# read from poetry format
+from = {format = "poetry", path = "pyproject.toml"}
+# and convert into setup.py
+to = {format = "setuppy", path = "setup.py"}

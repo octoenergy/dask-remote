@@ -90,6 +90,15 @@ jobs:
           path: dist
           destination: wheel
 
+  publish:
+    executor: standard
+    steps:
+      - checkout_source
+      - update_virtualenv
+      - run:
+          name: Publish wheel
+          command: make release
+
 
 # -----------------
 # Pipeline workflow
@@ -99,7 +108,7 @@ workflows:
 
   version: 2
 
-  lint-test-build:
+  lint-test-build-publish:
     jobs:
       - lint
       - test
@@ -110,3 +119,13 @@ workflows:
           filters:
             branches:
               only: master
+      - publish:
+          requires:
+            - build
+          filters:
+            # ignore any commit on any branch by default
+            branches:
+              ignore: /.*/
+            # only act on version tags
+            tags:
+              only: /[0-9]+(\.[0-9]+)*(-alpha\.[0-9]+)?/

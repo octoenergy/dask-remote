@@ -64,7 +64,10 @@ test:  ## Run pytest with grouped tests
 
 
 # Deployment
-.PHONY: package
+.PHONY: package release
 
-package:  ## Build project binary wheel distribution
-	poetry build -f wheel
+package:  ## Build project wheel distribution
+	poetry build
+
+release:  ## Publish wheel distribution to PyPi
+	poetry publish --build -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD}

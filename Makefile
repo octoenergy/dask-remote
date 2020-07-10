@@ -20,7 +20,7 @@ update:  ## Lock and install build dependencies
 	poetry update
 
 install:  ## Install build dependencies from lock file
-	poetry install -E k8s -E api
+	poetry install -E runner -E deployment
 
 
 # Development

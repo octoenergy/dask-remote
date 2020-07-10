@@ -10,12 +10,11 @@ REPO_ROOT = pathlib.Path(__file__).parent
 with open(REPO_ROOT / "README.md", encoding="utf-8") as f:
     README = f.read()
 
-REQUIREMENTS = ["distributed==2.*,>=2.9.0", "requests", "typing-extensions"]
+REQUIREMENTS = ["distributed", "requests", "typing-extensions"]
 
 EXTRAS = {
-    "api": ["fastapi"],
-    "k8s": ["kubernetes-asyncio==10.*,>=10.0.0"],
-    "uvicorn": ["uvicorn"],
+    "runner": ["fastapi", "uvicorn"],
+    "deployment": ["kubernetes-asyncio==10.*,>=10.0.0"],
 }
 
 

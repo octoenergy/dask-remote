@@ -3,12 +3,31 @@ requires = ["poetry>=1.0.0"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry]
+# Description
 name = "dask-remote"
-version = "0.0.1"
+version = "0.0.1-alpha"
 description = "Dask cluster based on a Kubernetes-native Deployment"
+# Credentials
+license = "MIT"
 authors = ["Octopus Energy <tech@octopus.energy>"]
+homepage = "https://github.com/octoenergy/dask-remote"
+# Package data
 packages = [
     { include = "dask_remote", from = "src" },
+]
+exclude = [
+    "src/dask_remote/runner/README.md",
+    "src/dask_remote/deployment/README.md",
+]
+# Distribution
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Typing :: Typed",
 ]
 
 [tool.poetry.dependencies]

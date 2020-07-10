@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 # Description
 name = "dask-remote"
-version = "0.0.1-alpha"
+version = "0.0.1-alpha.1"
 description = "Dask cluster based on a Kubernetes-native Deployment"
 # Credentials
 license = "MIT"

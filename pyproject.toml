@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 # Description
 name = "dask-remote"
-version = "0.0.1-alpha.1"
+version = "0.0.1-alpha.2"
 description = "Dask cluster based on a Kubernetes-native Deployment"
 # Credentials
 license = "MIT"
@@ -33,7 +33,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "*"
-distributed = "*"
+distributed = "^2.21.0"
 kubernetes_asyncio = { version = "^10.0", optional = true }
 fastapi = { version = "*", optional = true }
 uvicorn = { version = "*", optional = true }

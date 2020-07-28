@@ -1,3 +1,5 @@
+import asyncio
+
 from distributed.core import rpc
 from distributed.deploy.cluster import Cluster
 from distributed.security import Security
@@ -60,16 +62,20 @@ class AsyncContextCluster(ContextCluster):
 
 class RemoteSchedulerCluster(AsyncContextCluster):
     def __init__(self, asynchronous=False, loop=None, security=None):
-        self.security = security
-        self._scheduler_comm = None
+        self.security = security or Security()
         super().__init__(asynchronous=asynchronous, loop=loop)
 
-    def _new_scheduler_comm(self):
-        security = self.security or Security()
-        return rpc(self.scheduler_address, connection_args=security.get_connection_args("client"))
+    async def _start(self):
+        self.status: str
+        while self.status == "starting":
+            await asyncio.sleep(0.01)
+        if self.status == "running":
+            return
+        if self.status == "closed":
+            raise ValueError("Unexpected 'closed' status")
 
-    @property
-    def scheduler_comm(self):
-        if not self._scheduler_comm:
-            self._scheduler_comm = self._new_scheduler_comm()
-        return self._scheduler_comm
+        self.status = "starting"
+        self.scheduler_comm = rpc(
+            self.scheduler_address, connection_args=self.security.get_connection_args("client")
+        )
+        await super()._start()

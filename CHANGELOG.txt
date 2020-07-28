@@ -7,3 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1-alpha.1] - 2020-07-10
 ### Added
  - Release of `ApiProcess` server and belated `ApiCluster` client.
+
+## [0.0.1-alpha.2] - 2020-07-28
+### Added
+ - Upgrade Dask `distributed` dependency to version 2.21.0.
